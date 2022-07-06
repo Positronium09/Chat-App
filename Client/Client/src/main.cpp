@@ -1,8 +1,6 @@
 #include <windows.h>
 #include <windowsx.h>
 
-#include <fstream>
-
 #include "MainWindow.h"
 #include "UsernamePromt.h"
 #include "WindowClass.h"
