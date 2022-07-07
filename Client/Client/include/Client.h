@@ -6,6 +6,8 @@
 #include <windows.h>
 #include <winsock2.h>
 
+#include "header.h"
+
 
 class Client
 {
@@ -32,8 +34,3 @@ class Client
 	void SetHwnd(HWND hWnd);
 	const std::wstring& GetUsername();
 };
-
-typedef struct _messagePack
-{
-	std::wstring message;
-} MESSAGEPACK;

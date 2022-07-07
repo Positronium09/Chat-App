@@ -114,14 +114,15 @@ void Server::ListenMessages(CLIENT client)
 		}
 	}
 
-	std::lock_guard wcoutLock{ wcoutMutex };
-	std::lock_guard clientsLock{ clientsMutex };
 
 	std::wstringstream stringstream{ };
-	stringstream << L'[' << client.username << L']' << L"[CLIENT DISCONNECTED]";
+	stringstream << client.username << L" disconnected";
 	std::wstring message = stringstream.str();
 
-	std::wcout << L"\033[31m" << message << L"\033[0m\n";
+	{
+		std::lock_guard wcoutLock{ wcoutMutex };
+		std::wcout << L"\033[31m[" << client.username << L']' << L"[CLIENT DISCONNECTED]" << L"\033[0m\n";
+	}
 
 	HEADER header = ConstructHeader(HeaderType::USER_DISCONNECTED, 
 		static_cast<uint32_t>(7), 
@@ -132,7 +133,10 @@ void Server::ListenMessages(CLIENT client)
 	closeConnection();
 	DecreaseClientCount();
 
-	connectedClients.erase(client);
+	{
+		std::lock_guard clientsLock{ clientsMutex };
+		connectedClients.erase(client);
+	}
 }
 
 void Server::BroadCastMessage(SOCKET excludeSocket, HEADER header, const wchar_t* username, const wchar_t* message)
@@ -206,14 +210,29 @@ void Server::AcceptConnections()
 			connectedClients.insert(client);
 		}
 
+		std::wstringstream stringstream{ };
+		stringstream << client.username << L" connected";
+		std::wstring message = stringstream.str();
+
+		header = ConstructHeader(HeaderType::USER_CONNECTED,
+			static_cast<uint32_t>(7),
+			static_cast<uint32_t>(message.length() + 1), true);
+
+		BroadCastMessage(clientSocket, header, L"SERVER", message.c_str());
+
 		std::thread t{ &Server::ListenMessages, this, client };
 
-		std::lock_guard lock{ listenThreadsMutex };
-		listenThreads.push_back(std::move(t));
+		{ 
+			std::lock_guard lock{ listenThreadsMutex };
+			listenThreads.push_back(std::move(t));
+		}
+
 		IncreaseClientCount();
 
-		std::lock_guard wcoutLock{ wcoutMutex };
-		std::wcout << L"\033[32m" << L'[' << client.username << L']' << L"[CLIENT CONNECTED]" << L"\033[0m\n";
+		{
+			std::lock_guard wcoutLock{ wcoutMutex };
+			std::wcout << L"\033[32m[" << client.username << L']' << L"[CLIENT CONNECTED]" << L"\033[0m\n";
+		}
 	}
 }
 

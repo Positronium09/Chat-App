@@ -1,7 +1,6 @@
 #include "Client.h"
 
-#include "header.h"
-#include "clientMessages.h"
+#include "windowMessages.h"
 
 #include <sstream>
 #include <iostream>
@@ -98,10 +97,10 @@ void Client::ListenForMessages()
 		#ifdef _DEBUG
 		if (h.type == HeaderType::RECIEVED)
 		{
-			MESSAGEPACK* pack = new MESSAGEPACK{ L"[DEBUG][Message Recieved]\n" };
+			MESSAGEPACK* pack = new MESSAGEPACK{ HeaderType::MESSAGE, L"[DEBUG][Message Recieved]\n" };
 
 			// Window releases the pack
-			PostMessage(hWnd, MM_MESSAGE_RECIEVED, 0, (LPARAM)pack);
+			PostMessage(hWnd, MM_MESSAGE_PACK, 0, (LPARAM)pack);
 			//std::wcout << L"[Message Recieved]\n";
 			continue;
 		}
@@ -115,7 +114,7 @@ void Client::ListenForMessages()
 			send(connectionSocket, (char*)username.c_str(), h.usernameLength, NULL);
 		}
 
-		else if (h.type == HeaderType::MESSAGE || h.type == HeaderType::BROADCAST || h.type == HeaderType::USER_DISCONNECTED)
+		else
 		{
 			wchar_t* username = new wchar_t[h.usernameLength];
 			wchar_t* message = new wchar_t[h.messageLength];
@@ -138,10 +137,10 @@ void Client::ListenForMessages()
 				<< h.hours << L":" << h.minutes << L":" << h.seconds << L"]: "
 				<< message << '\n';
 
-			MESSAGEPACK* pack = new MESSAGEPACK{ sstream.str() };
+			MESSAGEPACK* pack = new MESSAGEPACK{ h.type, sstream.str() };
 
 			// Window releases the pack
-			PostMessage(hWnd, MM_MESSAGE_RECIEVED, 0, (LPARAM)pack);
+			PostMessage(hWnd, MM_MESSAGE_PACK, 0, (LPARAM)pack);
 		}
 	}
 

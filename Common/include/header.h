@@ -12,7 +12,8 @@ enum class HeaderType : std::uint32_t
 	RECIEVED = 4,
 	BROADCAST = 5,
 	QUERY_USERNAME = 6,
-	USER_DISCONNECTED = 7
+	USER_CONNECTED = 7,
+	USER_DISCONNECTED = 8
 };
 
 

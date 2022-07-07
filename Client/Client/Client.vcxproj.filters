@@ -18,7 +18,7 @@
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\MainWindow.cpp">
+    <ClCompile Include="src\ClientMainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Client.cpp">
@@ -29,16 +29,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\MainWindow.h">
+    <ClInclude Include="include\ClientMainWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\UsernamePromt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\clientMessages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

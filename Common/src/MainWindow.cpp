@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 
 #include "systemcolors.h"
+#include "header.h"
 
 #include <sstream>
 #include <algorithm>
@@ -19,33 +20,6 @@
 static constexpr COLORREF terminalGreenColor = RGB(0x13, 0xa1, 0x0e);
 static constexpr COLORREF terminalRedColor = RGB(0xc5, 0x0f, 0x1f);
 
-
-std::wstring FormatMessage(const std::wstring& username, const wchar_t* message)
-{
-	std::wstringstream stream;
-
-	time_t currentTime;
-	struct tm localTime;
-
-	time(&currentTime);
-	localtime_s(&localTime, &currentTime);
-
-	const int hours = localTime.tm_hour;
-	const int minutes = localTime.tm_min;
-	const int seconds = localTime.tm_sec;
-
-	stream << L'[' << username << L"]["
-		<< hours << L":" << minutes << L":" << seconds << L"]: "
-		<< message << '\n';
-
-	return stream.str();
-}
-
-MainWindow::MainWindow(std::wstring username, PCSTR ip, PCSTR port) :
-	client{ username, ip, port }
-{
-
-}
 
 HWND MainWindow::CreateRichEdit(COLORREF textColor, COLORREF backgroundColor, DWORD styles)
 {
@@ -77,13 +51,14 @@ HWND MainWindow::CreateRichEdit(COLORREF textColor, COLORREF backgroundColor, DW
 	{
 		return hWndEdit;
 	}
-	if (IID* IID_ITextServices = (IID*)GetProcAddress(hmodRichEdit, "IID_ITextServices"))
+
+	if (IID* IID_ITextServicesFromDll = (IID*)GetProcAddress(hmodRichEdit, "IID_ITextServices"))
 	{
 		ComPtr<IUnknown> unknown = nullptr;
 		if (SendMessage(hWndEdit, EM_GETOLEINTERFACE, 0, (LPARAM)&unknown))
 		{
 			ITextServices* textService = nullptr;
-			unknown->QueryInterface(*IID_ITextServices, (void**)&textService);
+			unknown->QueryInterface(*IID_ITextServicesFromDll, (void**)&textService);
 			if (textService)
 			{
 				textService->OnTxPropertyBitsChange(TXTBIT_ALLOWBEEP, 0);
@@ -96,18 +71,17 @@ HWND MainWindow::CreateRichEdit(COLORREF textColor, COLORREF backgroundColor, DW
 	return hWndEdit;
 }
 
-LRESULT MainWindow::OnCreate(HWND hWnd, WPARAM wParam, LPARAM lParam)
+LRESULT MainWindow::OnCreate(HWND p_hWnd, WPARAM wParam, LPARAM lParam)
 {
+	UNREFERENCED_PARAMETER(p_hWnd);
+	UNREFERENCED_PARAMETER(wParam);
+	UNREFERENCED_PARAMETER(lParam);
+
 	titleBar.EnableButtons(TitleBarLibrary::CloseButton | TitleBarLibrary::MinimizeButton);
 	titleBar.SetSizingMargins(MARGINS{ 0, 0, 0, 0 });
 	TitleBarLibrary::UpdateNCArea(hWnd);
 
-	client.SetHwnd(hWnd);
-
 	const auto& colors = titleBar.GetTitleBarColors();
-
-	start = std::chrono::high_resolution_clock::now();
-	SetTimer(hWnd, TIMEOUT_TIMER_ID, 125, NULL);
 
 	RECT clientRect{ };
 	GetClientRect(hWnd, &clientRect);
@@ -178,40 +152,14 @@ void MainWindow::DisplayOnScreen(const wchar_t* toPrint, COLORREF textColor)
 	}
 
 	SendMessage(hWndMessages, EM_EXSETSEL, NULL, (LPARAM)&selection);
-
 }
 
-void MainWindow::Send()
+LRESULT MainWindow::OnNotify(HWND p_hWnd, WPARAM wParam, LPARAM lParam)
 {
-	if (!client.IsConnected())
-	{
-		return;
-	}
+	UNREFERENCED_PARAMETER(p_hWnd);
+	UNREFERENCED_PARAMETER(wParam);
+	UNREFERENCED_PARAMETER(lParam);
 
-	LRESULT length = SendMessage(hWndMessageEnter, WM_GETTEXTLENGTH, NULL, NULL) + 1;
-
-	wchar_t* message = new wchar_t[length];
-
-	SendMessage(hWndMessageEnter, WM_GETTEXT, length, (LPARAM)message);
-
-	DisplayOnScreen(FormatMessage(client.GetUsername(), message).c_str());
-
-	client.Send(message);
-
-	delete[] message;
-
-	SendMessage(hWndMessageEnter, WM_SETTEXT, NULL, (LPARAM)TEXT(""));
-}
-
-LRESULT MainWindow::OnDestroy(HWND hWnd, WPARAM wParam, LPARAM lParam)
-{
-	client.CloseConnection();
-	PostQuitMessage(0);
-	return 0;
-}
-
-LRESULT MainWindow::OnNotify(HWND hWnd, WPARAM wParam, LPARAM lParam)
-{
 	LPNMHDR nmhdr = reinterpret_cast<LPNMHDR>(lParam);
 
 	switch (nmhdr->code)
@@ -243,30 +191,12 @@ LRESULT MainWindow::OnNotify(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-LRESULT MainWindow::OnTimer(HWND hWnd, WPARAM wParam, LPARAM lParam)
+LRESULT MainWindow::OnEraseBkGnd(HWND p_hWnd, WPARAM wParam, LPARAM lParam)
 {
-	if (client.IsConnected())
-	{
-		KillTimer(hWnd, TIMEOUT_TIMER_ID);
+	UNREFERENCED_PARAMETER(p_hWnd);
+	UNREFERENCED_PARAMETER(wParam);
+	UNREFERENCED_PARAMETER(lParam);
 
-		DisplayOnScreen(L"[CONNECTED]\n", terminalGreenColor);
-		return 0; 
-	}
-
-	auto time = std::chrono::high_resolution_clock::now();
-
-	if (std::chrono::duration_cast<std::chrono::seconds>(time - start).count() > TIMEOUT_SECONDS)
-	{
-		KillTimer(hWnd, TIMEOUT_TIMER_ID);
-
-		DisplayOnScreen(L"[CONNECTION TIMED OUT]", terminalRedColor);
-	}
-
-	return 0;
-}
-
-LRESULT MainWindow::OnEraseBkGnd(HWND hWnd, WPARAM wParam, LPARAM lParam)
-{
 	auto& colors = titleBar.GetTitleBarColors();
 	HBRUSH brush = CreateSolidBrush(colors.maximizeButtonColors.defaultForegroundColor);
 
@@ -279,28 +209,4 @@ LRESULT MainWindow::OnEraseBkGnd(HWND hWnd, WPARAM wParam, LPARAM lParam)
 
 	DeleteBrush(brush);
 	return 1;
-}
-
-LRESULT MainWindow::OnMessageRecieved(HWND hWnd, WPARAM wParam, LPARAM lParam)
-{
-	MESSAGEPACK* pack = reinterpret_cast<MESSAGEPACK*>(lParam);
-
-	DisplayOnScreen(pack->message.c_str());
-	if (GetForegroundWindow() != hWnd)
-	{
-		MessageBeep(MB_OK);
-	}
-
-	delete pack;
-
-	return 0;
-}
-
-LRESULT MainWindow::OnDisconnected(HWND hWnd, WPARAM wParam, LPARAM lParam)
-{
-	DisplayOnScreen(L"[DISCONNECTED]\n", terminalRedColor);
-
-	SendMessage(hWnd, WM_SETTEXT, NULL, (LPARAM)TEXT("Disconnected"));
-
-	return 0;
 }

@@ -20,14 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Client.cpp" />
-    <ClCompile Include="src\MainWindow.cpp" />
+    <ClCompile Include="src\ClientMainWindow.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\UsernamePromt.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Client.h" />
-    <ClInclude Include="include\clientMessages.h" />
-    <ClInclude Include="include\MainWindow.h" />
+    <ClInclude Include="include\ClientMainWindow.h" />
     <ClInclude Include="include\UsernamePromt.h" />
   </ItemGroup>
   <ItemGroup>

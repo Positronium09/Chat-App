@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <windowsx.h>
 
-#include "MainWindow.h"
+#include "ClientMainWindow.h"
 #include "UsernamePromt.h"
 #include "WindowClass.h"
 #include "Titlebar.h"
@@ -94,7 +94,7 @@ void CreateMainWindow(const std::wstring& username)
 
 	static WindowWrapper::WindowClass mainWindowClass{ TEXT("ClientWindowClassName"), CS_HREDRAW | CS_VREDRAW };
 
-	static MainWindow mainWindow{ username, ip.c_str(), port.c_str() };
+	static ClientMainWindow mainWindow{ username, ip.c_str(), port.c_str() };
 	WindowWrapper::WindowBase::Create(&mainWindow, mainWindowClass, username.c_str(),
 		POINT{ CW_USEDEFAULT, CW_USEDEFAULT }, SIZE{ 800, 600 }, WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX);
 
