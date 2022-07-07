@@ -14,8 +14,6 @@ class ClientMainWindow : public MainWindow
 	Client client;
 	std::chrono::steady_clock::time_point start{ };
 
-	HWND CreateRichEdit(COLORREF textColor, COLORREF backgroundColor, DWORD styles = 0);
-
 	void Send();
 
 	LRESULT OnCreate(HWND hWnd, WPARAM wParam, LPARAM lParam);

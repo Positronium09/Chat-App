@@ -1,13 +1,12 @@
 #pragma once
 
-#define WIN32_LEAN_AND_MEAN
-
 
 #include "header.h"
 
 #include <set>
 #include <vector>
 #include <mutex>
+#include <string>
 
 #include <windows.h>
 #include <winsock2.h>
@@ -26,10 +25,13 @@ inline bool operator<(const CLIENT& lhs, const CLIENT& rhs)
 class Server
 {
 	private:
+	HWND hWnd = NULL;
 	std::set<CLIENT> connectedClients;
 	std::vector<std::thread> listenThreads;
 	SOCKET listenSocket = INVALID_SOCKET;
 	std::uint64_t clientCount = 0;
+
+	std::thread acceptConnectionsThread;
 
 	std::mutex wcoutMutex{ };
 	std::mutex clientsMutex{ };
@@ -39,7 +41,6 @@ class Server
 
 	void AcceptConnections();
 	void ListenMessages(CLIENT client);
-	void BroadCastMessage(SOCKET excludeSocket, HEADER header, const wchar_t* username, const wchar_t* message);
 
 	void IncreaseClientCount();
 	void DecreaseClientCount();
@@ -52,5 +53,10 @@ class Server
 	~Server();
 
 	void StartListening();
+	void StopServer();
+
+	void BroadCastMessage(SOCKET excludeSocket, HEADER header, const wchar_t* username, const wchar_t* message);
+
 	std::uint64_t GetClientCount();
+	void SetHwnd(HWND hWnd);
 };

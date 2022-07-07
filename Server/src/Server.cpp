@@ -1,6 +1,7 @@
 #include "Server.h"
 
 #include "header.h"
+#include "windowMessages.h"
 
 #include <iostream>
 #include <sstream>
@@ -105,9 +106,13 @@ void Server::ListenMessages(CLIENT client)
 
 			std::lock_guard lock{ wcoutMutex };
 
-			std::wcout << L'[' << username << L"]["
+			std::wstringstream stringstream;
+			stringstream << L'[' << username << L"]["
 				<< header.hours << L":" << header.minutes << L":" << header.seconds << L"]: "
 				<< message << '\n';
+
+			MESSAGEPACK* pack = new MESSAGEPACK{ HeaderType::MESSAGE, stringstream.str() };
+			PostMessage(hWnd, MM_MESSAGE_PACK, NULL, (LPARAM)pack);
 
 			delete[] username;
 			delete[] message;
@@ -119,19 +124,20 @@ void Server::ListenMessages(CLIENT client)
 	stringstream << client.username << L" disconnected";
 	std::wstring message = stringstream.str();
 
-	{
-		std::lock_guard wcoutLock{ wcoutMutex };
-		std::wcout << L"\033[31m[" << client.username << L']' << L"[CLIENT DISCONNECTED]" << L"\033[0m\n";
-	}
-
 	HEADER header = ConstructHeader(HeaderType::USER_DISCONNECTED, 
 		static_cast<uint32_t>(7), 
 		static_cast<uint32_t>(message.length() + 1), true);
 
 	BroadCastMessage(client.clientSocket, header, L"SERVER", message.c_str());
 
+	stringstream.str(L"");
+	stringstream << L'[' << client.username << L']' << L"[CLIENT DISCONNECTED]\n";
+	MESSAGEPACK* pack = new MESSAGEPACK{ HeaderType::USER_DISCONNECTED, stringstream.str() };
+	PostMessage(hWnd, MM_MESSAGE_PACK, NULL, (LPARAM)pack);
+
 	closeConnection();
 	DecreaseClientCount();
+	PostMessage(hWnd, MM_CLIENT_COUNT_CHANGED, NULL, NULL);
 
 	{
 		std::lock_guard clientsLock{ clientsMutex };
@@ -228,11 +234,12 @@ void Server::AcceptConnections()
 		}
 
 		IncreaseClientCount();
+		PostMessage(hWnd, MM_CLIENT_COUNT_CHANGED, NULL, NULL);
 
-		{
-			std::lock_guard wcoutLock{ wcoutMutex };
-			std::wcout << L"\033[32m[" << client.username << L']' << L"[CLIENT CONNECTED]" << L"\033[0m\n";
-		}
+		stringstream.str(L"");
+		stringstream << L'[' << client.username << L']' << L"[CLIENT CONNECTED]\n";
+		MESSAGEPACK* pack = new MESSAGEPACK{ HeaderType::USER_CONNECTED, stringstream.str() };
+		PostMessage(hWnd, MM_MESSAGE_PACK, NULL, (LPARAM)pack);
 	}
 }
 
@@ -243,10 +250,11 @@ void Server::StartListening()
 		closesocket(listenSocket);
 		return;
 	}
-	std::thread acceptConnectionsThread{ &Server::AcceptConnections, this };
+	acceptConnectionsThread = std::thread{ &Server::AcceptConnections, this };
+}
 
-	HWND console = GetConsoleWindow();
-
+void Server::StopServer()
+{
 	const auto disconnectClients = [this]()
 	{
 		std::lock_guard lock{ clientsMutex };
@@ -270,26 +278,22 @@ void Server::StartListening()
 			}
 		}
 	};
+	int result = closesocket(listenSocket);
 
-	while (true)
-	{
-		if (GetAsyncKeyState(VK_ESCAPE) & 1 && GetForegroundWindow() == console)
-		{
-			int result = closesocket(listenSocket);
+	acceptConnectionsThread.join();
 
-			acceptConnectionsThread.join();
+	disconnectClients();
 
-			disconnectClients();
-			
-			stopThreads();
-
-			break;
-		}
-	}
+	stopThreads();
 }
 
 std::uint64_t Server::GetClientCount()
 {
 	std::lock_guard lock{ clientCountMutex };
 	return clientCount;
+}
+
+void Server::SetHwnd(HWND p_hWnd)
+{
+	hWnd = p_hWnd;
 }

@@ -25,3 +25,6 @@ typedef struct _config
 
 CONFIG ParseConfigFile();
 void SaveUsernameToConfigFile(const std::wstring& username);
+
+
+std::wstring Format(const std::wstring& username, const wchar_t* message);

@@ -155,3 +155,25 @@ void SaveUsernameToConfigFile(const std::wstring& username)
 	file.seekg(0, std::ios_base::beg);
 	file << fileContents;
 }
+
+
+std::wstring Format(const std::wstring& username, const wchar_t* message)
+{
+	std::wstringstream stream;
+
+	time_t currentTime;
+	struct tm localTime;
+
+	time(&currentTime);
+	localtime_s(&localTime, &currentTime);
+
+	const int hours = localTime.tm_hour;
+	const int minutes = localTime.tm_min;
+	const int seconds = localTime.tm_sec;
+
+	stream << L'[' << username << L"]["
+		<< hours << L":" << minutes << L":" << seconds << L"]: "
+		<< message << '\n';
+
+	return stream.str();
+}

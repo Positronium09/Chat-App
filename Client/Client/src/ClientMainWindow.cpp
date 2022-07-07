@@ -3,6 +3,7 @@
 #include "systemcolors.h"
 #include "header.h"
 #include "windowMessages.h"
+#include "utils.h"
 
 #include <sstream>
 #include <algorithm>
@@ -22,80 +23,10 @@ static constexpr COLORREF terminalGreenColor = RGB(0x13, 0xa1, 0x0e);
 static constexpr COLORREF terminalRedColor = RGB(0xc5, 0x0f, 0x1f);
 
 
-std::wstring Format(const std::wstring& username, const wchar_t* message)
-{
-	std::wstringstream stream;
-
-	time_t currentTime;
-	struct tm localTime;
-
-	time(&currentTime);
-	localtime_s(&localTime, &currentTime);
-
-	const int hours = localTime.tm_hour;
-	const int minutes = localTime.tm_min;
-	const int seconds = localTime.tm_sec;
-
-	stream << L'[' << username << L"]["
-		<< hours << L":" << minutes << L":" << seconds << L"]: "
-		<< message << '\n';
-
-	return stream.str();
-}
-
 ClientMainWindow::ClientMainWindow(std::wstring username, PCSTR ip, PCSTR port) :
 	client{ username, ip, port }
 {
 
-}
-
-HWND ClientMainWindow::CreateRichEdit(COLORREF textColor, COLORREF backgroundColor, DWORD styles)
-{
-	HWND hWndEdit = CreateWindowEx(NULL, MSFTEDIT_CLASS, NULL,
-		WS_VISIBLE | WS_CHILD | styles,
-		0, 0, 0, 0,
-		hWnd, NULL, NULL, NULL);
-
-	SendMessage(hWndEdit, EM_SETLIMITTEXT, 120, NULL);
-	SendMessage(hWndEdit, EM_SETBKGNDCOLOR, 0, backgroundColor);
-
-	CHARFORMAT cf{ };
-	cf.cbSize = sizeof(CHARFORMAT);
-	cf.dwMask = CFM_ALL;
-
-	SendMessage(hWndEdit, EM_GETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
-	SendMessage(hWndEdit, EM_SETFONTSIZE, 2, NULL);
-	SendMessage(hWndEdit, EM_GETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
-	SendMessage(hWndEdit, EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)&cf);
-
-	cf = CHARFORMAT{ };
-	cf.cbSize = sizeof(CHARFORMAT);
-	cf.dwMask = CFM_COLOR;
-	cf.crTextColor = textColor;
-	SendMessage(hWndEdit, EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)&cf);
-
-	HMODULE hmodRichEdit = LoadLibrary(L"Msftedit.dll");
-	if (hmodRichEdit == NULL)
-	{
-		return hWndEdit;
-	}
-	if (IID* IID_ITextServices = (IID*)GetProcAddress(hmodRichEdit, "IID_ITextServices"))
-	{
-		ComPtr<IUnknown> unknown = nullptr;
-		if (SendMessage(hWndEdit, EM_GETOLEINTERFACE, 0, (LPARAM)&unknown))
-		{
-			ITextServices* textService = nullptr;
-			unknown->QueryInterface(*IID_ITextServices, (void**)&textService);
-			if (textService)
-			{
-				textService->OnTxPropertyBitsChange(TXTBIT_ALLOWBEEP, 0);
-			}
-		}
-	}
-
-	FreeLibrary(hmodRichEdit);
-
-	return hWndEdit;
 }
 
 LRESULT ClientMainWindow::OnCreate(HWND hWnd, WPARAM wParam, LPARAM lParam)
@@ -154,6 +85,9 @@ LRESULT ClientMainWindow::OnTimer(HWND hWnd, WPARAM wParam, LPARAM lParam)
 		KillTimer(hWnd, TIMEOUT_TIMER_ID);
 
 		DisplayOnScreen(L"[CONNECTION TIMED OUT]", terminalRedColor);
+
+		SendMessage(hWnd, WM_SETTEXT, NULL, (LPARAM)TEXT("Connection timed out"));
+		TitleBarLibrary::UpdateNCArea(hWnd);
 	}
 
 	return 0;
@@ -190,6 +124,7 @@ LRESULT ClientMainWindow::OnDisconnected(HWND hWnd, WPARAM wParam, LPARAM lParam
 	DisplayOnScreen(L"[DISCONNECTED]\n", terminalRedColor);
 
 	SendMessage(hWnd, WM_SETTEXT, NULL, (LPARAM)TEXT("Disconnected"));
+	TitleBarLibrary::UpdateNCArea(hWnd);
 
 	return 0;
 }
