@@ -28,7 +28,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	WindowWrapper::WindowClass mainWindowClass{ TEXT("ServerWindowClassName"), CS_HREDRAW | CS_VREDRAW };
 
 	ServerMainWindow mainWindow{ "127.0.0.1", "19977" };
-	WindowWrapper::WindowBase::Create(&mainWindow, mainWindowClass, L"SERVER | 0 CLIENTS CONNECTED",
+	WindowWrapper::WindowBase::Create(&mainWindow, mainWindowClass, L"SERVER | 0 CLIENT(S) CONNECTED",
 		POINT{ CW_USEDEFAULT, CW_USEDEFAULT }, SIZE{ 800, 600 }, WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX);
 
 	ShowWindow(mainWindow, SW_SHOW);
