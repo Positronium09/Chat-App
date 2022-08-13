@@ -185,7 +185,9 @@ void Server::AcceptConnections()
 {
 	while (true)
 	{
-		SOCKET clientSocket = WSAAccept(listenSocket, NULL, NULL, NULL, NULL);
+		sockaddr_in addr{ };
+		INT len = sizeof(sockaddr_in);
+		SOCKET clientSocket = WSAAccept(listenSocket, (sockaddr*)&addr, &len, NULL, NULL);
 
 		if (clientSocket == INVALID_SOCKET)
 		{
@@ -237,7 +239,12 @@ void Server::AcceptConnections()
 		PostMessage(hWnd, MM_CLIENT_COUNT_CHANGED, NULL, NULL);
 
 		stringstream.str(L"");
-		stringstream << L'[' << client.username << L']' << L"[CLIENT CONNECTED]\n";
+		stringstream << L'[' << client.username << L']' << L"[CLIENT CONNECTED][" << 
+			addr.sin_addr.S_un.S_un_b.s_b1 << L'.' << 
+			addr.sin_addr.S_un.S_un_b.s_b2 << L'.' << 
+			addr.sin_addr.S_un.S_un_b.s_b3 << L'.' << 
+			addr.sin_addr.S_un.S_un_b.s_b4 << L"]\n";
+
 		MESSAGEPACK* pack = new MESSAGEPACK{ HeaderType::USER_CONNECTED, stringstream.str() };
 		PostMessage(hWnd, MM_MESSAGE_PACK, NULL, (LPARAM)pack);
 	}

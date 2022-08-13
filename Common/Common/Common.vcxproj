@@ -93,7 +93,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Client\Custom TitleBar Library\include;$(SolutionDir)Client\Thin Window Wrapper\include;$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Common\Custom TitleBar Library\include;$(SolutionDir)Common\Thin Window Wrapper\include;$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -109,7 +109,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Client\Custom TitleBar Library\include;$(SolutionDir)Client\Thin Window Wrapper\include;$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Common\Custom TitleBar Library\include;$(SolutionDir)Common\Thin Window Wrapper\include;$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,7 +125,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Client\Custom TitleBar Library\include;$(SolutionDir)Client\Thin Window Wrapper\include;$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Common\Custom TitleBar Library\include;$(SolutionDir)Common\Thin Window Wrapper\include;$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,7 +141,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Client\Custom TitleBar Library\include;$(SolutionDir)Client\Thin Window Wrapper\include;$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Common\Custom TitleBar Library\include;$(SolutionDir)Common\Thin Window Wrapper\include;$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -160,6 +160,14 @@
     <ClInclude Include="include\utils.h" />
     <ClInclude Include="include\MainWindow.h" />
     <ClInclude Include="include\windowMessages.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Custom TitleBar Library\Custom TitleBar Library.vcxproj">
+      <Project>{b2ce89bd-4674-4756-8b21-a900ce97cfde}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thin Window Wrapper\Thin Window Wrapper.vcxproj">
+      <Project>{6c7e2b80-a9b2-4e4a-804b-f85ed2a2c468}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

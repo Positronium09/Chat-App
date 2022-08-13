@@ -28,13 +28,7 @@
     <ClInclude Include="include\ServerMainWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Client\Custom TitleBar Library\Custom TitleBar Library.vcxproj">
-      <Project>{b2ce89bd-4674-4756-8b21-a900ce97cfde}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Client\Thin Window Wrapper\Thin Window Wrapper.vcxproj">
-      <Project>{6c7e2b80-a9b2-4e4a-804b-f85ed2a2c468}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Common\Common.vcxproj">
+    <ProjectReference Include="..\Common\Common\Common.vcxproj">
       <Project>{9c19516d-8465-4636-a376-591d3c21dd89}</Project>
     </ProjectReference>
   </ItemGroup>
@@ -113,7 +107,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;$(SolutionDir)Common\include;$(SolutionDir)Client\Custom TitleBar Library\include;$(SolutionDir)Client\Thin Window Wrapper\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;$(SolutionDir)Common\Common\include;$(SolutionDir)Common\Custom TitleBar Library\include;$(SolutionDir)Common\Thin Window Wrapper\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -129,7 +123,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;$(SolutionDir)Common\include;$(SolutionDir)Client\Custom TitleBar Library\include;$(SolutionDir)Client\Thin Window Wrapper\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;$(SolutionDir)Common\Common\include;$(SolutionDir)Common\Custom TitleBar Library\include;$(SolutionDir)Common\Thin Window Wrapper\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,7 +139,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;$(SolutionDir)Common\include;$(SolutionDir)Client\Custom TitleBar Library\include;$(SolutionDir)Client\Thin Window Wrapper\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;$(SolutionDir)Common\Common\include;$(SolutionDir)Common\Custom TitleBar Library\include;$(SolutionDir)Common\Thin Window Wrapper\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,7 +155,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);WIN32_LEAN_AND_MEAN</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;$(SolutionDir)Common\include;$(SolutionDir)Client\Custom TitleBar Library\include;$(SolutionDir)Client\Thin Window Wrapper\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)resource;$(ProjectDir)lib;$(ProjectDir)dependencies;$(ProjectDir);$(ProjectDir)include;$(SolutionDir)Common\Common\include;$(SolutionDir)Common\Custom TitleBar Library\include;$(SolutionDir)Common\Thin Window Wrapper\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

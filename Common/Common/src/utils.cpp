@@ -43,25 +43,6 @@ int Cleanup()
 	return 0;
 }
 
-
-std::string ConvertToString(const std::wstring& text)
-{
-	if (text.empty())
-	{
-		return "";
-	}
-
-	int size = WideCharToMultiByte(CP_UTF8, 0, text.c_str(), static_cast<int>(text.size()) + 1, nullptr, 0, nullptr, nullptr);
-
-	char* converted = new char[size];
-	WideCharToMultiByte(CP_UTF8, 0, text.c_str(), static_cast<int>(text.size()) + 1, converted, size, nullptr, nullptr);
-
-	std::string str = converted;
-	delete[] converted;
-
-	return str;
-}
-
 bool FileExists(const wchar_t* path)
 {
 	DWORD attributes = GetFileAttributes(path);
@@ -91,26 +72,36 @@ CONFIG ParseConfigFile()
 		return config;
 	}
 	
-	std::wifstream file{ filepath };
+	std::ifstream file{ filepath };
 
-	std::wstring line;
+	std::string line;
 	while (std::getline(file, line))
 	{
-		auto offset = line.find(L"=", 0);
+		auto offset = line.find("=", 0);
 		auto key = line.substr(0, offset);
 		auto value = line.substr(offset + 1);
 
-		if (key == L"username")
+		if (key == "username")
 		{
-			config.username = value;
+			int len = (int)strlen(value.c_str());
+			int strLen = MultiByteToWideChar(CP_UTF8, 0, value.c_str(), len, NULL, 0);
+			WCHAR* username = new WCHAR[strLen + 1llu];
+			if (username)
+			{
+				MultiByteToWideChar(CP_UTF8, 0, value.c_str(), len, username, strLen);
+				username[strLen] = L'\0';
+				config.username = username;
+				delete[] username;
+			}
+			
 		}
-		else if (key == L"ip")
+		else if (key == "ip")
 		{
-			config.ip = ConvertToString(value);
+			config.ip = value;
 		}
-		else if (key == L"port")
+		else if (key == "port")
 		{
-			config.port = ConvertToString(value);
+			config.port = value;
 		}
 	}
 
@@ -139,13 +130,32 @@ void SaveUsernameToConfigFile(const std::wstring& username)
 	if (offset == std::wstring::npos)
 	{
 		offset = 0;
+		int len = (int)wcslen(username.c_str());
+		int strLen = WideCharToMultiByte(CP_UTF8, 0, username.c_str(), len, NULL, 0, NULL, NULL);
+		CHAR* str = new CHAR[strLen + 1llu];
+		if (str != nullptr)
+		{
+			WideCharToMultiByte(CP_UTF8, 0, username.c_str(), len, str, strLen, NULL, NULL);
+			str[strLen] = '\0';
+			stringstream << str;
+			delete[] str;
+		}
 		stringstream << L"username=" << username << '\n';
 
 	}
 	else
 	{
 		offset += 9;
-		stringstream << username;
+		int len = (int)wcslen(username.c_str());
+		int strLen = WideCharToMultiByte(CP_UTF8, 0, username.c_str(), len, NULL, 0, NULL, NULL);
+		CHAR* str = new CHAR[strLen + 1llu];
+		if (str != nullptr)
+		{
+			WideCharToMultiByte(CP_UTF8, 0, username.c_str(), len, str, strLen, NULL, NULL);
+			str[strLen] = '\0';
+			stringstream << str;
+			delete[] str;
+		}
 	}
 
 	std::wstring insertString = stringstream.str();
@@ -155,7 +165,6 @@ void SaveUsernameToConfigFile(const std::wstring& username)
 	file.seekg(0, std::ios_base::beg);
 	file << fileContents;
 }
-
 
 std::wstring Format(const std::wstring& username, const wchar_t* message)
 {
