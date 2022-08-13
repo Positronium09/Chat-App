@@ -30,17 +30,8 @@
     <ClInclude Include="include\UsernamePromt.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.vcxproj">
+    <ProjectReference Include="..\Common\Common\Common.vcxproj">
       <Project>{9c19516d-8465-4636-a376-591d3c21dd89}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Common\Common\Common.vcxproj">
-      <Project>{9c19516d-8465-4636-a376-591d3c21dd89}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Custom TitleBar Library\Custom TitleBar Library.vcxproj">
-      <Project>{b2ce89bd-4674-4756-8b21-a900ce97cfde}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thin Window Wrapper\Thin Window Wrapper.vcxproj">
-      <Project>{6c7e2b80-a9b2-4e4a-804b-f85ed2a2c468}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
