@@ -24,7 +24,7 @@ static constexpr COLORREF terminalRedColor = RGB(0xc5, 0x0f, 0x1f);
 HWND MainWindow::CreateRichEdit(COLORREF textColor, COLORREF backgroundColor, DWORD styles)
 {
 	HWND hWndEdit = CreateWindowEx(NULL, MSFTEDIT_CLASS, NULL,
-		WS_VISIBLE | WS_CHILD | styles,
+		WS_VISIBLE | WS_CHILD | WS_VSCROLL | styles,
 		0, 0, 0, 0,
 		hWnd, NULL, NULL, NULL);
 
